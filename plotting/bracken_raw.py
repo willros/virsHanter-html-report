@@ -66,7 +66,7 @@ def bar_chart_bracken_raw(
             alt.X("percent:Q", axis=alt.Axis(format=".1%"), title="Percent of reads"),
             alt.Y("name:N", sort="-x", title=None),
             alt.Color("name:N", title=None),
-            tooltip=[alt.Tooltip("domain:N"), alt.Tooltip("percent:Q", format=".1%")],
+            tooltip=[alt.Tooltip("domain:N"), alt.Tooltip("new_est_reads:Q", title="Number of reads")],
         )
         .properties(width=500, height=500)
     )

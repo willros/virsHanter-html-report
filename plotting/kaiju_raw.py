@@ -18,7 +18,7 @@ def bar_chart_kaiju_raw(
 
     df = (
         pd.read_csv(file)
-        .groupby(["taxon_id", "percent", "taxon_name"], as_index=False)
+        .groupby(["taxon_id", "percent", "taxon_name", "reads"], as_index=False)
         .agg(taxonomy=("taxonomy", list))
         .sort_values("percent", ascending=False)
         .loc[lambda x: x.percent > cutoff]
@@ -31,7 +31,7 @@ def bar_chart_kaiju_raw(
             alt.X("percent:Q", axis=alt.Axis(format=".1%"), title="Percent of reads"),
             alt.Y("taxon_name:N", sort="-x", title=None),
             alt.Color("taxon_name:N", title=None),
-            tooltip=[alt.Tooltip("taxonomy:O"), alt.Tooltip("percent:Q", format=".1%")],
+            tooltip=[alt.Tooltip("taxonomy:O"), alt.Tooltip("reads:Q", title="Number of reads")],
         )
         .properties(width=500, height=500, title="Kaiju classification raw")
     )

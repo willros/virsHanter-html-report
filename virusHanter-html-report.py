@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import json
+import altair as alt
 # Import plotting functions from plotting
 from plotting import bracken_raw, contig_quality, kaiju_raw, kaiju_megahit, cat_megahit
 
@@ -10,10 +11,11 @@ def return_svg(svg: str):
         return f.read()
     
 # function to create the report
-def create_report(
+def html_template_report(
     sample_name: str,
-    out_path: str
-    plot: str,
+    out_path: str,
+    plot1: str,
+    plot2: str,
     svg: str,
 ) -> None:
     """
@@ -45,6 +47,7 @@ def create_report(
             <h1">
                 Welcome to The report of the sample! 
             </h1>
+            
             <!-- PLOT1 -->
             <h3 style="font-style:italic; text-align:center;"> 
                 This is a plot of a beautiful graph I just made! Enjoy!
@@ -52,7 +55,17 @@ def create_report(
             
             <div id="vis" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;"></div>
             <script type="text/javascript">
-                vegaEmbed("#vis", {plot});
+                vegaEmbed("#vis", {plot1});
+            </script>
+            
+            <!-- PLOT2 -->
+            <h3 style="font-style:italic; text-align:center;"> 
+                This is a plot of a beautiful graph I just made! Enjoy!
+            </h3>
+            
+            <div id="vis2" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;"></div>
+            <script type="text/javascript">
+                vegaEmbed("#vis2", {plot2});
             </script>
             
             <h1> 
@@ -76,32 +89,58 @@ def create_report(
     with open(output, "w") as f:
         print(html, file=f)
         
+        
+# function that writes the report using the right samples
+def create_report(
+    sample: str,
+    out_path: str,
+) -> None:
+    """
+    Generate the report
+    """
+    # Sample and sample name
+    sample = Path(sample)
+    sample_name = sample.parts[-1]
+    
+    # Number of bars to include in the figures:
+    number = 10
+    
+    # Raw bracken and kaiju report
+    cleaned_bracken_report = list(sample_folder.rglob("*bracken_raw.csv"))[0]
+    cleaned_kaiju_report = list(sample_folder.rglob("*kaiju_raw.csv"))[0]
+    
+    # Raw bracken and kaiju plots
+    bracken_bar_plot = bracken_raw.bar_chart_bracken_raw(
+        cleaned_bracken_report, number=number,virus_only=True
+    )
 
-# read in the data
-sample_folder = Path(sample_folder)
+    bracken_domain_bar_plot = bracken_raw.bar_chart_bracken_raw(
+        cleaned_bracken_report, level="domain", virus_only=False
+    )
 
-# Raw bracken and kaiju report
-cleaned_bracken_report = list(sample_folder.rglob("*bracken_raw.csv"))[0]
-cleaned_kaiju_report = list(sample_folder.rglob("*kaiju_raw.csv"))[0]
-# Plots
-bracken_bar_plot = bracken_raw.bar_chart_bracken_raw(
-    cleaned_bracken_report, number=number,virus_only=True
-)
+    kaiju_bar_plot = kaiju_raw.bar_chart_kaiju_raw(file=cleaned_kaiju_report).to_json()
 
-bracken_domain_bar_plot = bracken_raw.bar_chart_bracken_raw(
-    cleaned_bracken_report, level="domain", virus_only=False
-)
-
-kaiju_bar_plot = kaiju_raw.bar_chart_kaiju_raw(file=cleaned_kaiju_report).to_json()
-
-species_and_domain_bracken = (
-    alt.hconcat(bracken_bar_plot, bracken_domain_bar_plot)
-    .resolve_scale(color="independent")
-).to_json()
+    species_and_domain_bracken = (
+        alt.hconcat(bracken_bar_plot, bracken_domain_bar_plot)
+        .resolve_scale(color="independent")
+    ).to_json()
 
 
-# test svg
-svg = return_svg("visualization (1).svg")
+    # test svg
+    svg = return_svg("visualization (1).svg")
+    
+    # generate the html report
+    html_template_report(
+        sample_name=sample_name, 
+        out_path=out_path, 
+        plot1=species_and_domain_bracken, 
+        plot2=kaiju_bar_plot, 
+        svg=svg,
+    )
+
+# read in the data (testing sample11 for now)
+sample_folder = Path("../virusclassification_nextflow/results/sample11_S6/")
+
 
 # create report
-create_report()
+create_report(sample=sample_folder, out_path=".")
