@@ -4,6 +4,7 @@ import json
 import altair as alt
 # Import plotting functions from plotting
 from plotting import bracken_raw, contig_quality, kaiju_raw, kaiju_megahit, cat_megahit
+from utils import parse_bowtielog
 
 # function to read in svg code
 def return_svg(svg: str):
@@ -14,6 +15,8 @@ def return_svg(svg: str):
 def html_template_report(
     sample_name: str,
     out_path: str,
+    number_of_reads: int,
+    percent_aligned: float,
     plot1: str,
     plot2: str,
     svg: str,
@@ -26,7 +29,7 @@ def html_template_report(
     <!DOCTYPE html>
     <html>
         <head>
-            <title>Report</title>
+            <title>Report of {sample_name} </title>
             <link href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css" rel="stylesheet">
             <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
@@ -42,9 +45,13 @@ def html_template_report(
         </head>
         <body>
             <header>
-                <h1>Report</h1>
+                <h1>
+                Report of {sample_name}
+                Number of reads: {number_of_reads}
+                Percent aligned to the human genome: {percent_aligned}%
+                </h1>
             </header>
-            <h1">
+            <h1 style="text-align:center;">
                 Welcome to The report of the sample! 
             </h1>
             
@@ -105,9 +112,13 @@ def create_report(
     # Number of bars to include in the figures:
     number = 10
     
+    # Number of reads and number of reads aligned to reference genome (from bowtie2logfile)
+    bowtie2log = list(sample.rglob("*bowtie_raw.log"))[0]
+    number_of_reads, percent_aligned = parse_bowtielog.parse_alignments(bowtie2log)
+    
     # Raw bracken and kaiju report
-    cleaned_bracken_report = list(sample_folder.rglob("*bracken_raw.csv"))[0]
-    cleaned_kaiju_report = list(sample_folder.rglob("*kaiju_raw.csv"))[0]
+    cleaned_bracken_report = list(sample.rglob("*bracken_raw.csv"))[0]
+    cleaned_kaiju_report = list(sample.rglob("*kaiju_raw.csv"))[0]
     
     # Raw bracken and kaiju plots
     bracken_bar_plot = bracken_raw.bar_chart_bracken_raw(
@@ -133,6 +144,8 @@ def create_report(
     html_template_report(
         sample_name=sample_name, 
         out_path=out_path, 
+        number_of_reads=number_of_reads,
+        percent_aligned=percent_aligned,
         plot1=species_and_domain_bracken, 
         plot2=kaiju_bar_plot, 
         svg=svg,
