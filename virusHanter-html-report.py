@@ -36,47 +36,65 @@ def html_template_report(
             <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+            
+            
             <style>
-
+                body {{
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.5;
+                }}
                 header {{
-                background-color: #333;
+                background: linear-gradient(to right, #000000, #333333);
                 color: white;
-                padding: 20px;
+                padding: 40px;
+                text-align: center;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                }}
+                h1 {{
+                font-size: 3em;
+                margin: 0;
                 text-align: center;
                 }}
-
-                h1 {{
-                color: #2ecc71;
-                }}
-
                 h2 {{
-                color: #3498db;
+                font-size: 2em;
+                margin: 0;
                 }}
-
-                h3 {{
-                color: #9b59b6;
+                section {{
+                margin: 80px 0;
                 }}
-
-                h4 {{
-                color: #f1c40f;
+                hr {{
+                border: 0;
+                height: 1px;
+                background: #333;
+                background-image: linear-gradient(to right, #ccc, #333, #ccc);
                 }}
-
-                div {{
-                color: #e67e22;
-                }}
-
             </style>
 
         </head>
         <body>
             <header>
                 <h1>
-                Report of {sample_name}
+                Pandemic Prepardeness Report 
                 </h1>
+                <h2>
+                Report of {sample_name}
+                </h2>
             </header>
             <h1 style="text-align:center;">
                 Welcome to The report of the sample! 
             </h1>
+            
+            
+
+        <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 600px; border-radius: 10px; box-shadow: 5px 5px 5px grey; background-color: #cccccc;">
+            <h1>Kraken2 and Kaiju</h1>
+            <ul>
+            <li>Kraken2 and Kaiju are tools for identifying the taxonomic origin of <strong>DNA sequences</strong></li>
+            <li>They use <strong>hierarchical classification systems</strong> and <strong>databases of pre-computed k-mer hashes</strong> to classify query sequences</li>
+            <li>Both programs may be used to <strong>rapidly and accurately classify large numbers of sequences</strong>, even in the absence of significant sequence similarity to known reference sequences</li>
+            </ul>
+        </div>
             
             <!-- PLOT ALIGNED -->
             <h3 style="font-style:italic; text-align:center;"> 
@@ -87,12 +105,12 @@ def html_template_report(
             </h3>
             
             
-            <div id="aligned" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;"></div>
+            <div id="aligned" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
             <script type="text/javascript">
                 vegaEmbed("#aligned", {bowtie_plot});
             </script>
             
-            <hr style="width: 100%; color: #FF0000">
+            <hr />
             
             <!-- PLOT1 -->
             <h1> This is another plot </h1>
@@ -100,7 +118,7 @@ def html_template_report(
                 This is a plot of a beautiful graph I just made! Enjoy!
             </h3>
             
-            <div id="vis" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;"></div>
+            <div id="vis" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
             <script type="text/javascript">
                 vegaEmbed("#vis", {plot1});
             </script>
@@ -110,7 +128,7 @@ def html_template_report(
                 This is a plot of a beautiful graph I just made! Enjoy!
             </h3>
             
-            <div id="vis2" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;"></div>
+            <div id="vis2" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
             <script type="text/javascript">
                 vegaEmbed("#vis2", {plot2});
             </script>
@@ -124,7 +142,7 @@ def html_template_report(
             <h1 style="color:orange; text-align:center; font-style:italic;">
                 This is an embedded SVG
             </h1>
-            <div style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;">
+            <div style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;">
                 {svg}
             </div>
             
@@ -201,7 +219,7 @@ def create_report(
     )
 
 # read in the data (testing sample11 for now)
-sample_folder = Path("../virusclassification_nextflow/results/sample11_S6/")
+sample_folder = Path("testdata/sample11_S6")
 
 
 # create report
