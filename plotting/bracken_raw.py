@@ -60,7 +60,7 @@ def bar_chart_bracken_raw(
     df = df_bracken_species_raw(file, level, cutoff, virus_only).head(number)
 
     return (
-        alt.Chart(df, title="Bracken classification raw")
+        alt.Chart(df, title="Kraken classification raw")
         .mark_bar()
         .encode(
             alt.X("percent:Q", axis=alt.Axis(format=".1%"), title="Percent of reads"),

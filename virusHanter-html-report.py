@@ -19,8 +19,11 @@ def html_template_report(
     number_aligned: int,
     number_unaligned: int,
     bowtie_plot: str,
-    plot1: str,
-    plot2: str,
+    megahit_histogram: str,
+    kaiju_raw: str,
+    kraken_raw: str,
+    kaiju_and_cat: str,
+    cat_kaiju_df: str,
     svg: str,
 ) -> None:
     """
@@ -32,11 +35,9 @@ def html_template_report(
     <html>
         <head>
             <title>Report of {sample_name} </title>
-            <link href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css" rel="stylesheet">
             <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-            <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+            <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-            
             
             <style>
                 body {{
@@ -58,7 +59,8 @@ def html_template_report(
                 }}
                 h2 {{
                 font-size: 2em;
-                margin: 0;
+                margin-bottom:30px;
+                text-align: center;
                 }}
                 section {{
                 margin: 80px 0;
@@ -69,10 +71,24 @@ def html_template_report(
                 background: #333;
                 background-image: linear-gradient(to right, #ccc, #333, #ccc);
                 }}
+                table {{
+                border-collapse: collapse;
+                }}
+                th, td {{
+                border: 1px solid #ccc;
+                padding: 10px;
+                text-align: left;
+                }}
+                th {{
+                background-color: #eee;
+                }}
+                
             </style>
 
         </head>
+        
         <body>
+        
             <header>
                 <h1>
                 Pandemic Prepardeness Report 
@@ -81,70 +97,109 @@ def html_template_report(
                 Report of {sample_name}
                 </h2>
             </header>
-            <h1 style="text-align:center;">
-                Welcome to The report of the sample! 
-            </h1>
             
-            
+            <h2>
+                Information about Reads
+            </h2>
+            <table style="margin-bottom:30px;">
+                <tr>
+                    <th>Total reads</th>
+                    <th>Reads aligned to human genome</th>
+                    <th>Reads NOT aligned to human genome</th>
+                </tr>
+                <tr>
+                    <td>{total_reads:,}</td>
+                    <td>{number_aligned:,} ({number_aligned / total_reads * 100:.2f}%)</td>
+                    <td>{number_unaligned:,} ({number_unaligned / total_reads * 100:.2f}%)</td>
+                </tr>
+            </table>
 
-        <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 600px; border-radius: 10px; box-shadow: 5px 5px 5px grey; background-color: #cccccc;">
-            <h1>Kraken2 and Kaiju</h1>
-            <ul>
-            <li>Kraken2 and Kaiju are tools for identifying the taxonomic origin of <strong>DNA sequences</strong></li>
-            <li>They use <strong>hierarchical classification systems</strong> and <strong>databases of pre-computed k-mer hashes</strong> to classify query sequences</li>
-            <li>Both programs may be used to <strong>rapidly and accurately classify large numbers of sequences</strong>, even in the absence of significant sequence similarity to known reference sequences</li>
-            </ul>
-        </div>
-            
-            <!-- PLOT ALIGNED -->
-            <h3 style="font-style:italic; text-align:center;"> 
-                This is the bowtie plot!
-                Number of reads: {total_reads}
-                Number aligned to the human genome: {number_aligned}
-                Number unaligned: {number_unaligned}
-            </h3>
-            
-            
-            <div id="aligned" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
+            <div id="aligned" style="display:flex;width:100%;height:100%;"></div>
             <script type="text/javascript">
                 vegaEmbed("#aligned", {bowtie_plot});
             </script>
             
             <hr />
             
-            <!-- PLOT1 -->
-            <h1> This is another plot </h1>
-            <h3 style="font-style:italic; text-align:center;"> 
-                This is a plot of a beautiful graph I just made! Enjoy!
-            </h3>
+            <!-- KRAKEN RAW -->
+            <h2> 
+            Raw reads classfied with Kraken and Kaiju
+            </h2>
             
-            <div id="vis" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
-            <script type="text/javascript">
-                vegaEmbed("#vis", {plot1});
-            </script>
-            
-            <!-- PLOT2 -->
-            <h3 style="font-style:italic; text-align:center;"> 
-                This is a plot of a beautiful graph I just made! Enjoy!
-            </h3>
-            
-            <div id="vis2" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
-            <script type="text/javascript">
-                vegaEmbed("#vis2", {plot2});
-            </script>
-            
-            <h1> 
-                This is a PDF 
-            </h1>
-            <!-- <iframe src="{{pdf}}#toolbar=0" width="100%" height="900px" border="0"> -->
-            </iframe>
-            
-            <h1 style="color:orange; text-align:center; font-style:italic;">
-                This is an embedded SVG
-            </h1>
-            <div style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;">
-                {svg}
+            <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 1000px; border-radius: 10px; box-shadow: 5px 5px 5px grey; background-color: #cccccc; display:flex;justify-content:center;">
+            <ul>
+            <li>KRAKEN2 and KAIJU are both popular bioinformatics tools for accurately and efficiently identifying and categorizing large numbers of short DNA sequences.</li>
+            <li>KRAKEN2 is based on a probabilistic model and uses a pre-constructed database of genomic sequences, while KAIJU uses a database of reference sequences and an efficient indexing method.</li>
+            <li>KRAKEN2 and KAIJU have been shown to produce highly accurate results in a short amount of time, but KRAKEN2 may require more computational resources.</li>
+            <li>Both KRAKEN2 and KAIJU are open-source and freely available for use, making them valuable resources for researchers in the field of genomics.</li>
+            </ul>
             </div>
+
+            <h3>
+            Kraken classification
+            </h3>
+            <div id="kraken_raw" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
+            <script type="text/javascript">
+                vegaEmbed("#kraken_raw", {kraken_raw});
+            </script>
+            
+            <!-- KAIJU RAW -->
+            <h3>
+            Kaiju classification
+            </h3>
+            <div id="kaiju_raw" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
+            <script type="text/javascript">
+                vegaEmbed("#kaiju_raw", {kaiju_raw});
+            </script>
+            
+            <hr />
+            
+            <h2>
+            Contig information
+            </h2>
+            <h3>
+            Histogram of megahit contigs
+            </h3>
+            <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 1000px; border-radius: 10px; box-shadow: 5px 5px 5px grey; background-color: #cccccc; display:flex;justify-content:center;">
+            <ul>
+            <li>MEGAHIT is a popular and highly-efficient bioinformatics tool for assembling large and complex genomes.</li>
+            <li>It is based on a De Bruijn graph approach and is capable of accurately assembling millions of reads into a complete genome in a short amount of time.</li>
+            <li>MEGAHIT has been widely used in a variety of genomic studies and has been shown to produce high-quality assemblies that are comparable to those generated by other leading assemblers.</li>
+            </ul>
+            </div>
+
+
+            <!-- PLOT MEGAHIT -->
+            
+            <div id="megahit_histo" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
+            <script type="text/javascript">
+                vegaEmbed("#megahit_histo", {megahit_histogram});
+            </script>
+            
+            <!-- PLOT Kaiju and Cat -->
+            <h3>
+            Contigs classified with Kaiju and CAT
+            </h3>
+            
+            <div style="border: 1px solid black; padding: 10px; margin: 10px; width: 1000px; border-radius: 10px; box-shadow: 5px 5px 5px grey; background-color: #cccccc; display:flex;justify-content:center;">
+            <ul>
+            <li>CAT (Classification and Annotation Tool) is a popular bioinformatics tool that uses a combination of machine learning algorithms and a pre-constructed database of genomic sequences to classify and annotate DNA sequences.</li>
+            <li>The BLASTP aspect of CAT involves using the Basic Local Alignment Search Tool (BLASTP) to compare a query sequence to the database of reference sequences and identify similar sequences.</li>
+            <li>BLASTP is a widely-used algorithm for sequence alignment and is known for its speed and accuracy in identifying similar sequences.</li>
+          </ul>
+          </div>
+            
+            <div id="kaiju_and_cat" style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;margin:40px;"></div>
+            <script type="text/javascript">
+                vegaEmbed("#kaiju_and_cat", {kaiju_and_cat});
+            </script>
+            
+            <h3>
+            Table containing information about contigs
+            </h3>
+            {cat_kaiju_df}
+            <hr />
+            
             
         </body>
     </html>
@@ -193,13 +248,35 @@ def create_report(
         cleaned_bracken_report, level="domain", virus_only=False
     )
 
-    kaiju_bar_plot = kaiju_raw.bar_chart_kaiju_raw(file=cleaned_kaiju_report).to_json()
+    kaiju_raw_plot = kaiju_raw.bar_chart_kaiju_raw(file=cleaned_kaiju_report).to_json()
 
     species_and_domain_bracken = (
         alt.hconcat(bracken_bar_plot, bracken_domain_bar_plot)
         .resolve_scale(color="independent")
     ).to_json()
     
+    
+    # Contigs (Megahit)
+    megahit_csv = list(sample.rglob("megahit/*.csv"))[0]
+    megahit_histogram = contig_quality.megahit_contig_histogram(file=megahit_csv).to_json()
+    
+    # Contigs (CAT and Kaiju)
+    # files
+    kaiju_megahit_report = list(sample.rglob("*megahit.out"))[0]
+    cat_megahit_out = list(sample.rglob("*contigs_names.txt"))[0]
+    cat_kaiju_csv = list(sample.rglob("*cat_kaiju_merged.csv"))[0]
+
+    # plots
+    kaiju_bar_plot = kaiju_megahit.bar_chart_kaiju_megahit(file=kaiju_megahit_report)
+    cat_bar_plot = cat_megahit.bar_chart_cat_megahit(file=cat_megahit_out)
+    kaiju_and_cat = (
+        alt.hconcat(kaiju_bar_plot, cat_bar_plot)
+        .resolve_scale(color="independent")
+        .to_json()
+    )
+
+    # cat and kaiju dataframe
+    cat_kaiju_df = pd.read_csv(cat_kaiju_csv)[["name", "taxon_id", "length", "last_level_kaiju", "last_level_cat"]].head(10).to_html()
 
 
     # test svg
@@ -212,15 +289,19 @@ def create_report(
         total_reads=total_reads,
         number_aligned=number_aligned,
         number_unaligned=number_unaligned,
-        plot1=species_and_domain_bracken, 
-        plot2=kaiju_bar_plot, 
+        kraken_raw=species_and_domain_bracken, 
+        kaiju_raw=kaiju_raw_plot, 
         svg=svg,
         bowtie_plot=bowtie_plot,
+        megahit_histogram=megahit_histogram,
+        kaiju_and_cat=kaiju_and_cat,
+        cat_kaiju_df=cat_kaiju_df,
     )
 
 # read in the data (testing sample11 for now)
-sample_folder = Path("testdata/sample11_S6")
+sample_folder = Path("../virusclassification_nextflow/results/")
+samples = [x for x in sample_folder.iterdir() if x.is_dir() and not x.stem.startswith(".")]
 
-
-# create report
-create_report(sample=sample_folder, out_path=".")
+for sample in samples:
+    # create report
+    create_report(sample=sample, out_path=".")
