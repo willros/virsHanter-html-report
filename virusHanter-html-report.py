@@ -4,7 +4,7 @@ import json
 import altair as alt
 # Import plotting functions from plotting
 from plotting import bracken_raw, contig_quality, kaiju_raw, kaiju_megahit, cat_megahit, bowtie2_alignment_plot
-from utils import parse_bowtielog
+from utils import parse_bowtielog, parse_fastp_report
 
 # function to read in svg code
 def return_svg(svg: str):
@@ -19,6 +19,7 @@ def html_template_report(
     number_aligned: int,
     number_unaligned: int,
     bowtie_plot: str,
+    fastp_df: str,
     megahit_histogram: str,
     kaiju_raw: str,
     kraken_raw: str,
@@ -82,7 +83,6 @@ def html_template_report(
                 th {{
                 background-color: #eee;
                 }}
-                
             </style>
 
         </head>
@@ -103,7 +103,7 @@ def html_template_report(
             </h2>
             <table style="margin-bottom:30px;">
                 <tr>
-                    <th>Total reads</th>
+                    <th>Total reads pairs</th>
                     <th>Reads aligned to human genome</th>
                     <th>Reads NOT aligned to human genome</th>
                 </tr>
@@ -118,6 +118,13 @@ def html_template_report(
             <script type="text/javascript">
                 vegaEmbed("#aligned", {bowtie_plot});
             </script>
+            
+            <h2>
+            Information from fastp
+            </h2>
+            <div style="margin: auto;">
+            {fastp_df}
+            </div>
             
             <hr />
             
@@ -235,6 +242,10 @@ def create_report(
     # Bowtie2 alignment plot:
     bowtie_plot = bowtie2_alignment_plot.plot_alignment(bowtie2log).to_json()
     
+    # fastp dataframe
+    fastp_report = list(sample.rglob("*fastp/*.html"))[0]
+    fastp_df = parse_fastp_report.parse_fastp(fastp_report).to_html(classes=["center-table"])
+    
     # Raw bracken and kaiju report
     cleaned_bracken_report = list(sample.rglob("*bracken_raw.csv"))[0]
     cleaned_kaiju_report = list(sample.rglob("*kaiju_raw.csv"))[0]
@@ -293,6 +304,7 @@ def create_report(
         kaiju_raw=kaiju_raw_plot, 
         svg=svg,
         bowtie_plot=bowtie_plot,
+        fastp_df=fastp_df,
         megahit_histogram=megahit_histogram,
         kaiju_and_cat=kaiju_and_cat,
         cat_kaiju_df=cat_kaiju_df,
