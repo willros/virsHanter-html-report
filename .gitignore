@@ -130,3 +130,6 @@ dmypy.json
 
 # Testdata
 testdata
+
+# Virus references
+virus-references
