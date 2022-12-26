@@ -28,10 +28,18 @@ def bar_chart_kaiju_raw(
         alt.Chart(df.head(number))
         .mark_bar()
         .encode(
-            alt.X("percent:Q", axis=alt.Axis(format=".1%"), title="Percent of reads"),
+            alt.X("percent:Q", 
+                  axis=alt.Axis(format=".1%"), 
+                  title="Percent of reads",
+                  scale=alt.Scale(zero=True) 
+            ),
             alt.Y("taxon_name:N", sort="-x", title=None),
             alt.Color("taxon_name:N", title=None),
             tooltip=[alt.Tooltip("taxonomy:O"), alt.Tooltip("reads:Q", title="Number of reads")],
         )
-        .properties(width=500, height=500, title="Kaiju classification raw")
+        .properties(
+            width="container",
+            height="container",
+            title="Kaiju classification raw"
+        )
     )
