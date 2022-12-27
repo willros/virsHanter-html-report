@@ -68,7 +68,7 @@ def bar_chart_bracken_raw(
             alt.Color("name:N", title=None),
             tooltip=[alt.Tooltip("domain:N"), alt.Tooltip("new_est_reads:Q", title="Number of reads")],
         )
-        .properties(width=500, height=500)
+        .properties(width="container", height="container")
     )
 
 

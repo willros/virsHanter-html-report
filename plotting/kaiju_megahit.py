@@ -56,5 +56,5 @@ def bar_chart_kaiju_megahit(file: str) -> alt.vegalite.v4.api.Chart:
             alt.Color("last_level:N", title=None),
             tooltip=[alt.Tooltip("second_level"), alt.Tooltip("third_level")],
         )
-        .properties(width=500, height=500)
+        .properties(width="container", height="container")
     )

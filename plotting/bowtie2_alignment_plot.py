@@ -38,7 +38,6 @@ def plot_alignment(bowtie_log: str) -> None:
         .properties(
             title="Reads aligned to the human reference genome",
             width="container",
-            height="container",
         )
     )
         

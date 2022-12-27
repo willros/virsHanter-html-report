@@ -20,7 +20,7 @@ def megahit_contig_histogram(file: str) -> alt.vegalite.v4.api.Chart:
             alt.X("length:Q", bin=alt.Bin(step=500), title="Length (nt)"),
             alt.Y("count(length):Q", title="Number of contigs"),
         )
-        .properties(width=500, height=500)
+        .properties(width="container", height="container")
     )
 
 
