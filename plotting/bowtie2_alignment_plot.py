@@ -35,7 +35,11 @@ def plot_alignment(bowtie_log: str) -> None:
                 alt.Tooltip("type:N"),
             ],
         )
-        .properties(title="Reads aligned to the human reference genome")
+        .properties(
+            title="Reads aligned to the human reference genome",
+            width="container",
+            height="container",
+        )
     )
         
 
