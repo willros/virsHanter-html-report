@@ -313,7 +313,7 @@ def panel_report(
     # header
     head = header(
         text=f"""
-        # Pandemic Prepardeness Report
+        # Pandemic Preparedness Report
         ## Report of Sample {sample.parts[-1]}
         """,
         fontsize="20px",
