@@ -26,6 +26,22 @@ def bar_chart_cat_megahit(file: str) -> alt.vegalite.v4.api.Chart:
         .loc[lambda x: x.classification != "no taxid assigned"]
         .loc[lambda x: x["superkingdom"] != "no support"]
         .loc[lambda x: x["phylum"] != "no support"]
+    )
+    
+    # If all reads are filtered out
+    # Return mock fiugre
+    if cat.shape[0] == 0:
+        return (
+            alt.Chart(pd.DataFrame({"name": ["No contigs were found"]}))
+            .mark_text()
+            .encode(
+                alt.Y("name:N", title=None)
+            )
+            .properties(width="container", height="container")
+        )
+    
+    cat = (
+        cat
         .drop(columns=["classification", "lineage", "lineage scores"])
         .assign(kingdom_cat=lambda x: x["superkingdom"].str[:-6])
         .drop(columns="superkingdom")
