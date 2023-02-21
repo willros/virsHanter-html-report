@@ -28,7 +28,7 @@ def bar_chart_cat_megahit(file: str) -> alt.vegalite.v4.api.Chart:
         .loc[lambda x: x["phylum"] != "no support"]
     )
     
-    # If all reads are filtered out
+    # If all reads are filtered out, shape[0] == 0
     # Return mock fiugre
     if cat.shape[0] == 0:
         return (
